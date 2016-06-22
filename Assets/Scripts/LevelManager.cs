@@ -12,7 +12,7 @@ public class LevelManager : MonoBehaviour {
     public int ItemsToCountMax = 0;
     public int TotalItems = 0;
     public AudioClip AudioCorrectAnswer;
-    public int EasyDifficultyMin = 1;
+    public int EasyDifficultyMin = 3;
     public int EasyDifficultyMax = 5;
     public int MediumDifficultyMin = 6;
     public int MediumDifficultyMax = 10;
@@ -23,28 +23,23 @@ public class LevelManager : MonoBehaviour {
     private Announcer Announcer;
     private int inputTotal = 0;
     private string itemName;
-    private string difficulty = "easy";
-
-    void Awake()
-    {
-    }
+    private string difficulty;
 
     // Use this for initialization
     void Start () {
-        DontDestroyOnLoad(gameObject);
 
         DifficultyDictionary = new Dictionary<string, int[,]>();
         DifficultyDictionary.Add("easy", new int[,] { { EasyDifficultyMin, EasyDifficultyMax } });
         DifficultyDictionary.Add("medium", new int[,] { { MediumDifficultyMin, MediumDifficultyMax } });
         DifficultyDictionary.Add("hard", new int[,] { { HardDifficultyMin, HardDifficultyMax } });
-
+        Difficulty = PlayerPrefs.GetString("Difficulty");
     }
 
     // Update is called once per frame
     void Update () {
 	
 	}
-    public string Difficulty
+    private string Difficulty
     {
         get
         {
@@ -96,20 +91,5 @@ public class LevelManager : MonoBehaviour {
                 }
             }
         }
-    }
-
-    public void ReloadScene()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    public void LoadNextScene()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
-    }
-
-    public void LoadMenuScene()
-    {
-        SceneManager.LoadScene(0);
     }
 }

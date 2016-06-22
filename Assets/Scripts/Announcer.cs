@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public class Announcer : MonoBehaviour {
     public Text TextAnnouncements;
-    public float PauseBetweenWords = 0.01f;
+    public float PauseBetweenWords = 0.0f;
 
     public AudioClip Voice1;
     public AudioClip Voice2;
@@ -51,10 +51,23 @@ public class Announcer : MonoBehaviour {
     public AudioClip VoiceWatermelons;
     public AudioClip VoiceWith;
 
+    static private Announcer _instance = null;
+
     private Dictionary<string, AudioClip> VoiceDictionary;
     private AudioSource AudioSource;
 
-    // Use this for initialization
+    void Awake()
+    {
+        if (_instance != null)
+        {
+            Destroy(gameObject);
+        } else
+        {
+            DontDestroyOnLoad(gameObject);
+            _instance = this;
+        }
+    }
+
     void Start () {
         AudioSource = gameObject.GetComponent<AudioSource>();
 
@@ -104,11 +117,6 @@ public class Announcer : MonoBehaviour {
         TextAnnouncements.text = "";
     }
 
-    // Update is called once per frame
-    void Update () {
-	
-	}
-
     IEnumerator SpeakSentence(string Sentence, float WaitBeforeStart, float VoicePitch)
     {
         float WordDuration;
@@ -116,9 +124,9 @@ public class Announcer : MonoBehaviour {
 
         yield return new WaitForSeconds(WaitBeforeStart);
 
-        foreach (Match Words in Regex.Matches(Sentence))
+        foreach (Match Word in Regex.Matches(Sentence))
         {
-            WordDuration = Say(Words.Value.ToLower(), VoicePitch);
+            WordDuration = Say(Word.Value.ToLower(), VoicePitch);
             yield return new WaitForSeconds(PauseBetweenWords + WordDuration);
         }
     }
