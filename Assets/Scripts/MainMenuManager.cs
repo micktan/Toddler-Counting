@@ -8,12 +8,14 @@ public class MainMenuManager : MonoBehaviour {
 	void Start () {
         Announcer = FindObjectOfType<Announcer>();
         Announcer.Announce("Toddler Counting!", 0.0f, 1.1f);
+        StartCoroutine(CallToAction());
     }
 
-    public void SetGameLevel(string Difficulty)
+    IEnumerator CallToAction(float Interval = 1.5f)
     {
-        PlayerPrefs.SetString("Difficulty", Difficulty);
-        Announcer.Announce(Difficulty + "!", 0.0f, 1.1f);
+        yield return new WaitForSeconds(Interval);
+        Announcer.Announce("Click Play to begin!", 0.0f, 1.1f);
+        StartCoroutine(CallToAction(8.0f));
     }
 
     public void StartLevel(int Level)
