@@ -43,6 +43,8 @@ public class ClickToCountSetup : MonoBehaviour {
             }
             if (Input.GetMouseButtonUp(0))
             {
+//                LevelMenuManager LevelMenuManager = FindObjectOfType<LevelMenuManager>();
+//                LevelMenuManager.ToggleSideMenu(true);
                 HandleTouch(10, Camera.main.ScreenToWorldPoint(Input.mousePosition), TouchPhase.Ended);
             }
         }
@@ -60,8 +62,7 @@ public class ClickToCountSetup : MonoBehaviour {
                 // TODO
                 break;
             case TouchPhase.Ended:
-                LevelMenuManager LevelMenuManager = FindObjectOfType<LevelMenuManager>();
-                LevelMenuManager.ToggleSideMenu(true);
+
 
                 RaycastHit RaycastHit;
                 Ray Ray = new Ray(touchPosition, Vector3.forward);
