@@ -29,10 +29,9 @@ public class ClickToCountClickHandler : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-	
-	}
+    }
 
-    public void Click()
+    void ToggleClickState()
     {
         if (!Clicked)
         {
@@ -71,13 +70,15 @@ public class ClickToCountClickHandler : MonoBehaviour {
         }
 
         Rigidbody = GameObject.GetComponent<Rigidbody>();
-        Rigidbody.isKinematic = true;
+        Rigidbody.useGravity = false;
 
         MeshCollider MeshCollider = GameObject.GetComponent<MeshCollider>();
         if (!MeshCollider)
         {
-            GameObject.AddComponent<MeshCollider>();
+            MeshCollider = GameObject.AddComponent<MeshCollider>();
+            MeshCollider.convex = true;
         }
+
     }
 
     public void CorrectClick()
@@ -99,7 +100,7 @@ public class ClickToCountClickHandler : MonoBehaviour {
     {
         if (!Clicked)
         {
-            Click();
+            ToggleClickState();
             CorrectClick();
         }
     }
@@ -108,7 +109,8 @@ public class ClickToCountClickHandler : MonoBehaviour {
 public class ClickToCountItem : MonoBehaviour
 {
     public ClickToCountClickHandler ClickToCountClickHandler;
-    void OnMouseDown()
+    
+    public void TouchTouchPhaseEnded()
     {
         ClickToCountClickHandler.ChildClickHandler();
     }

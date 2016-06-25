@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class ClickToCountSetup : MonoBehaviour {
 
@@ -24,8 +25,58 @@ public class ClickToCountSetup : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-	
-	}
+
+        foreach (Touch touch in Input.touches)
+        {
+            HandleTouch(touch.fingerId, Camera.main.ScreenToWorldPoint(touch.position), touch.phase);
+        }
+
+        if (Input.touchCount == 0 && !EventSystem.current.IsPointerOverGameObject(-1))
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                HandleTouch(10, Camera.main.ScreenToWorldPoint(Input.mousePosition), TouchPhase.Began);
+            }
+            if (Input.GetMouseButton(0))
+            {
+                HandleTouch(10, Camera.main.ScreenToWorldPoint(Input.mousePosition), TouchPhase.Moved);
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                HandleTouch(10, Camera.main.ScreenToWorldPoint(Input.mousePosition), TouchPhase.Ended);
+            }
+        }
+    }
+
+    private void HandleTouch(int touchFingerId, Vector3 touchPosition, TouchPhase touchPhase)
+    {
+
+        switch (touchPhase)
+        {
+            case TouchPhase.Began:
+                // TODO
+                break;
+            case TouchPhase.Moved:
+                // TODO
+                break;
+            case TouchPhase.Ended:
+                LevelMenuManager LevelMenuManager = FindObjectOfType<LevelMenuManager>();
+                LevelMenuManager.ToggleSideMenu(true);
+
+                RaycastHit RaycastHit;
+                Ray Ray = new Ray(touchPosition, Vector3.forward);
+
+                if (Physics.Raycast(Ray, out RaycastHit))
+                {
+                    GameObject touchedObject = RaycastHit.transform.gameObject;
+                    ClickToCountItem ClickToCountItem = touchedObject.GetComponent<ClickToCountItem>();
+                    ClickToCountItem.TouchTouchPhaseEnded();
+                }
+
+                break;
+        }
+
+    }
 
     IEnumerator InitialiseItems()
     {
