@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using UnityEditor;
 
 
 
@@ -11,11 +10,9 @@ public class LevelMenuManager : MonoBehaviour {
 
     private float SideMenuCloseX;
     private float SideMenuOpenX;
-    private PlayerProgress PlayerProgress;
     // Use this for initialization
     void Start () {
         SetupSideMenuDimensions();
-        PlayerProgress = FindObjectOfType<PlayerProgress>();
     }
 
     // Update is called once per frame
@@ -110,15 +107,6 @@ public class LevelMenuManager : MonoBehaviour {
                 BadgeHolder BadgeHolder = BadgeHolderGameObject.GetComponent<BadgeHolder>();
 
                 string PrefabPath = BadgeHolder.PrefabResourcePath;
-                Debug.Log("1st PrefabPath:" + PrefabPath);
-                if (PrefabPath == "")
-                { 
-                    Object Prefab = PrefabUtility.GetPrefabParent(Badge);
-                    PrefabPath = AssetDatabase.GetAssetPath(Prefab).Replace("Assets/Resources/", "").Replace(".prefab", "");
-                    Debug.Log("2nd PrefabPath:" + PrefabPath);
-
-                }
-
                 SaveData.Name = BadgeHolderGameObject.transform.name;
                 SaveData.PrefabResourcePath = PrefabPath;
                 SaveData.LocalPosition = BadgeHolderGameObject.transform.localPosition;
@@ -129,11 +117,13 @@ public class LevelMenuManager : MonoBehaviour {
             }
         }
 
+        PlayerProgress PlayerProgress = FindObjectOfType<PlayerProgress>();
         PlayerProgress.Save(Game);
     }
 
     public void LoadGame()
     {
+        PlayerProgress PlayerProgress = FindObjectOfType<PlayerProgress>();
         Game Game = PlayerProgress.Load();
 
         if (Game != null)
