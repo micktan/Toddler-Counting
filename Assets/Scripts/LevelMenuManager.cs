@@ -2,20 +2,24 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using UnityEditor;
+
 
 
 public class LevelMenuManager : MonoBehaviour {
 
     private float SideMenuCloseX;
     private float SideMenuOpenX;
-
+    private PlayerProgress PlayerProgress;
     // Use this for initialization
     void Start () {
         SetupSideMenuDimensions();
+        PlayerProgress = FindObjectOfType<PlayerProgress>();
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
 	
 	}
 
@@ -87,6 +91,73 @@ public class LevelMenuManager : MonoBehaviour {
         {
             //close
             SideMenu.transform.localPosition = new Vector3(SideMenuCloseX, SideMenu.transform.localPosition.y);
+        }
+    }
+
+    public void SaveGame()
+    {
+        Game Game = new Game();
+
+        BadgeManagerSetup BadgeManagerSetup = FindObjectOfType<BadgeManagerSetup>();
+        if (BadgeManagerSetup)
+        {
+            Game.Badges = new List<BadgeStruct>();
+
+           foreach(GameObject Badge in GameObject.FindGameObjectsWithTag("Badge"))
+            {
+                BadgeStruct SaveData = new BadgeStruct();
+                GameObject BadgeHolderGameObject = Badge.transform.parent.gameObject;
+                BadgeHolder BadgeHolder = BadgeHolderGameObject.GetComponent<BadgeHolder>();
+
+                string PrefabPath = BadgeHolder.PrefabResourcePath;
+                Debug.Log("1st PrefabPath:" + PrefabPath);
+                if (PrefabPath == "")
+                { 
+                    Object Prefab = PrefabUtility.GetPrefabParent(Badge);
+                    PrefabPath = AssetDatabase.GetAssetPath(Prefab).Replace("Assets/Resources/", "").Replace(".prefab", "");
+                    Debug.Log("2nd PrefabPath:" + PrefabPath);
+
+                }
+
+                SaveData.Name = BadgeHolderGameObject.transform.name;
+                SaveData.PrefabResourcePath = PrefabPath;
+                SaveData.LocalPosition = BadgeHolderGameObject.transform.localPosition;
+                SaveData.LocalRotation = BadgeHolderGameObject.transform.localRotation;
+
+                Game.Badges.Add(SaveData);
+                Debug.Log("Save data:" + SaveData.Name + " path " + SaveData.PrefabResourcePath);
+            }
+        }
+
+        PlayerProgress.Save(Game);
+    }
+
+    public void LoadGame()
+    {
+        Game Game = PlayerProgress.Load();
+
+        if (Game != null)
+        {
+            foreach (BadgeHolder Badge in FindObjectsOfType<BadgeHolder>())
+            {
+                Destroy(Badge.gameObject);
+            }
+
+            BadgeManagerSetup BadgeManagerSetup = FindObjectOfType<BadgeManagerSetup>();
+            
+            foreach (BadgeStruct BadgeStruct in Game.Badges)
+            {
+                Debug.Log("Loading data " + BadgeStruct.Name + " path " + BadgeStruct.PrefabResourcePath);
+                GameObject NewBadge = Instantiate(BadgeManagerSetup.BadgePrefab);
+                NewBadge.transform.name = BadgeStruct.Name;
+                NewBadge.transform.parent = BadgeManagerSetup.transform;
+
+                BadgeHolder BadgeHolder = NewBadge.GetComponent<BadgeHolder>();
+                BadgeHolder.PrefabResourcePath = BadgeStruct.PrefabResourcePath;
+
+                NewBadge.transform.localPosition = BadgeStruct.LocalPosition;
+                NewBadge.transform.localRotation = BadgeStruct.LocalRotation;
+            }
         }
     }
 }

@@ -43,8 +43,6 @@ public class ClickToCountSetup : MonoBehaviour {
             }
             if (Input.GetMouseButtonUp(0))
             {
-//                LevelMenuManager LevelMenuManager = FindObjectOfType<LevelMenuManager>();
-//                LevelMenuManager.ToggleSideMenu(true);
                 HandleTouch(10, Camera.main.ScreenToWorldPoint(Input.mousePosition), TouchPhase.Ended);
             }
         }
@@ -62,6 +60,8 @@ public class ClickToCountSetup : MonoBehaviour {
                 // TODO
                 break;
             case TouchPhase.Ended:
+                //LevelMenuManager LevelMenuManager = FindObjectOfType<LevelMenuManager>();
+                //LevelMenuManager.ToggleSideMenu(true);
 
 
                 RaycastHit RaycastHit;
@@ -69,8 +69,8 @@ public class ClickToCountSetup : MonoBehaviour {
 
                 if (Physics.Raycast(Ray, out RaycastHit))
                 {
-                    GameObject touchedObject = RaycastHit.transform.gameObject;
-                    ClickToCountItem ClickToCountItem = touchedObject.GetComponent<ClickToCountItem>();
+                    GameObject GameObject = RaycastHit.transform.gameObject;
+                    ClickToCountItem ClickToCountItem = GameObject.GetComponent<ClickToCountItem>();
                     ClickToCountItem.TouchTouchPhaseEnded();
                 }
 
